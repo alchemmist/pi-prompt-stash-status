@@ -2,7 +2,6 @@ import { mkdir, readFile, unlink, writeFile } from "node:fs/promises";
 import { homedir } from "node:os";
 import { join } from "node:path";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
-import { Text, truncateToWidth } from "@earendil-works/pi-tui";
 
 const statusId = "prompt-stash";
 const defaultIcon = "";
@@ -32,12 +31,6 @@ async function readStash(ctx: ExtensionContext): Promise<string | undefined> {
   }
 }
 
-function formatTokens(tokens: number): string {
-  if (tokens >= 1_000_000) return `${(tokens / 1_000_000).toFixed(1)}m`;
-  if (tokens >= 1_000) return `${Math.round(tokens / 1_000)}k`;
-  return String(tokens);
-}
-
 async function stash(ctx: ExtensionContext, icon: string): Promise<void> {
   const text = ctx.ui.getEditorText();
   if (!text) return;
@@ -57,13 +50,9 @@ async function restore(ctx: ExtensionContext, icon: string): Promise<void> {
 
 export default function (pi: ExtensionAPI): void {
   let icon = defaultIcon;
-  let hasStash = false;
-  let requestRender: (() => void) | undefined;
 
   function updateStatus(ctx: ExtensionContext, nextHasStash: boolean, nextIcon: string): void {
-    hasStash = nextHasStash;
     ctx.ui.setStatus(statusId, nextHasStash ? nextIcon : undefined);
-    requestRender?.();
   }
 
   pi.registerShortcut("ctrl+s", {
@@ -77,27 +66,6 @@ export default function (pi: ExtensionAPI): void {
 
   pi.on("session_start", async (_event, ctx) => {
     icon = await readIcon();
-    ctx.ui.setFooter((tui, theme) => {
-      requestRender = () => tui.requestRender();
-      return {
-        render: (width: number) => {
-          const usage = ctx.getContextUsage();
-          const context = usage?.percent == null
-            ? "?"
-            : `${usage.percent.toFixed(1)}%/${formatTokens(usage.contextWindow)} (auto)`;
-          const model = ctx.model ? `${ctx.model.provider}/${ctx.model.id}` : "";
-          const parts = [ctx.cwd.split("/").filter(Boolean).at(-1) ?? ctx.cwd, context, model];
-          if (hasStash) parts.push(icon);
-          return new Text(theme.fg("muted", truncateToWidth(parts.filter(Boolean).join("  ·  "), width)), 0, 0).render(width);
-        },
-        invalidate() {},
-      };
-    });
     updateStatus(ctx, (await readStash(ctx)) !== undefined, icon);
-  });
-
-  pi.on("session_shutdown", (_event, ctx) => {
-    requestRender = undefined;
-    ctx.ui.setFooter(undefined);
   });
 }
