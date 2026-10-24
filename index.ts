@@ -32,7 +32,7 @@ async function readStash(ctx: ExtensionContext): Promise<string | undefined> {
 }
 
 function updateStatus(ctx: ExtensionContext, hasStash: boolean, icon: string): void {
-  ctx.ui.setStatus(statusId, hasStash ? icon : undefined);
+  ctx.ui.setStatus(statusId, hasStash ? `\x1b[35m${icon}\x1b[39m` : undefined);
 }
 
 async function stash(ctx: ExtensionContext, icon: string): Promise<void> {
