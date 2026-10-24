@@ -1,0 +1,13 @@
+{
+  "name": "pi-prompt-stash-status",
+  "version": "0.1.0",
+  "description": "Session-scoped prompt stash with a quiet status-line indicator for Pi",
+  "license": "MIT",
+  "type": "module",
+  "pi": {
+    "extensions": ["./index.ts"]
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": "*"
+  }
+}
