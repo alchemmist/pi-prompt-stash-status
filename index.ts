@@ -31,6 +31,10 @@ async function readStash(ctx: ExtensionContext): Promise<string | undefined> {
   }
 }
 
+function updateStatus(ctx: ExtensionContext, hasStash: boolean, icon: string): void {
+  ctx.ui.setStatus(statusId, hasStash ? icon : undefined);
+}
+
 async function stash(ctx: ExtensionContext, icon: string): Promise<void> {
   const text = ctx.ui.getEditorText();
   if (!text) return;
@@ -50,10 +54,6 @@ async function restore(ctx: ExtensionContext, icon: string): Promise<void> {
 
 export default function (pi: ExtensionAPI): void {
   let icon = defaultIcon;
-
-  function updateStatus(ctx: ExtensionContext, nextHasStash: boolean, nextIcon: string): void {
-    ctx.ui.setStatus(statusId, nextHasStash ? nextIcon : undefined);
-  }
 
   pi.registerShortcut("ctrl+s", {
     description: "Stash or restore the current prompt without notifications",
