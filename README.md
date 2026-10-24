@@ -16,7 +16,7 @@ pi install git:github.com/alchemmist/pi-prompt-stash-status
 
 The extension stores data under `~/.pi/agent/pi-prompt-stash-status/sessions/`.
 
-The default icon is `󰏖` (`nf-md-package_variant`). Override it in
+The default icon is `` (`nf-oct-package`). Override it in
 `~/.pi/agent/pi-prompt-stash-status/config.json`:
 
 ```json

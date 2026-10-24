@@ -4,7 +4,7 @@ import { join } from "node:path";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 
 const statusId = "prompt-stash";
-const defaultIcon = "󰏖";
+const defaultIcon = "";
 const storeRoot = join(homedir(), ".pi", "agent", "pi-prompt-stash-status", "sessions");
 const configPath = join(homedir(), ".pi", "agent", "pi-prompt-stash-status", "config.json");
 
